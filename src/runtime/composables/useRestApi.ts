@@ -57,7 +57,7 @@ export async function useApi(
 export function useUrl(url: string, cmp?: any): string {
   return RTRIM(
     RESOLVE_MARKS(
-      decodeURIComponent(url).replace("self", cmp?.route.path),
+      decodeURIComponent(url).replace("self", cmp?.route?.path),
       cmp
     ),
     "/"
