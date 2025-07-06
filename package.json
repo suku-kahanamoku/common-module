@@ -11,6 +11,7 @@
       "import": "./dist/module.mjs"
     },
     "./utils": {
+      "types": "./dist/runtime/utils",
       "import": "./dist/runtime/utils"
     }
   },
