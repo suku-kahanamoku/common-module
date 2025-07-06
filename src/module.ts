@@ -55,3 +55,6 @@ export default defineNuxtModule<ModuleOptions>({
     addImportsDir(resolve("./runtime/composables"));
   },
 });
+
+// Export all utils for direct import from main entry point
+export * from './runtime/utils';
