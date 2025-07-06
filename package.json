@@ -1,6 +1,6 @@
 {
   "name": "@suku-kahanamoku/common-module",
-  "version": "1.0.13",
+  "version": "1.0.14",
   "description": "My new Nuxt module",
   "repository": "@suku-kahanamoku/common-module",
   "license": "MIT",
@@ -13,6 +13,10 @@
     "./utils": {
       "types": "./dist/runtime/utils/index.d.ts",
       "import": "./dist/runtime/utils/index.js"
+    },
+    "./server-utils": {
+      "types": "./dist/runtime/server/utils/index.d.ts",
+      "import": "./dist/runtime/server/utils/index.js"
     }
   },
   "main": "./dist/module.mjs",
