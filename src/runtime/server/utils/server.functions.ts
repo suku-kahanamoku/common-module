@@ -1,5 +1,5 @@
-import { ITERATE } from "./modify-object.functions";
-import { RESOLVE_MARKS } from "./modify-string.functions";
+import { ITERATE } from "../../utils/modify-object.functions";
+import { RESOLVE_MARKS } from "../../utils/modify-string.functions";
 
 export function RESOLVE_FACTORY(item: Record<string, any>, factory: any) {
   if (factory) {

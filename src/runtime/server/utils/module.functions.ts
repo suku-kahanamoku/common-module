@@ -2,7 +2,7 @@ import { addServerHandler, extendPages } from "@nuxt/kit";
 import { parse } from "node:path";
 import * as fs from "node:fs";
 
-import { REMOVE_LAST_STRING, TRIM } from "./modify-string.functions";
+import { REMOVE_LAST_STRING, TRIM } from "../../utils/modify-string.functions";
 
 /**
  * @function GENERATE_API_ENDPOINT
