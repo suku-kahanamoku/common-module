@@ -1,6 +1,6 @@
 {
   "name": "@suku-kahanamoku/common-module",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "My new Nuxt module",
   "repository": "@suku-kahanamoku/common-module",
   "license": "MIT",
@@ -9,6 +9,9 @@
     ".": {
       "types": "./dist/types.d.mts",
       "import": "./dist/module.mjs"
+    },
+    "./utils": {
+      "import": "./dist/runtime/utils"
     }
   },
   "main": "./dist/module.mjs",
@@ -23,7 +26,7 @@
     "dist"
   ],
   "scripts": {
-    "prepack": "nuxt-module-build build",
+    "prepack": "nuxt-module-build build --failOnWarn=false",
     "dev": "npm run dev:prepare && nuxi dev playground",
     "dev:build": "nuxi build playground",
     "dev:prepare": "nuxt-module-build build --stub && nuxt-module-build prepare && nuxi prepare playground",
