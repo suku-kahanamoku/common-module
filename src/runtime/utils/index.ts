@@ -7,3 +7,4 @@ export * from "./modify-object.functions";
 export * from "./modify-string.functions";
 export * from "./modify-dom.functions";
 export * from "./server.functions";
+export * from "./module.functions";
