@@ -17,7 +17,3 @@ declare module "@vue/runtime-core" {
     };
   }
 }
-
-export * from "./types/config.interface";
-export * from "./types/item.interface";
-export * from "./types/response.interface";
