@@ -1,5 +1,3 @@
-import type { Http2ServerResponse } from "node:http2";
-
 /**
  * @interface IResponse
  * @description
