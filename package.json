@@ -7,7 +7,7 @@
   "type": "module",
   "exports": {
     ".": {
-      "types": "./dist/types.d.mts",
+      "types": "./dist/runtime/types.d.ts",
       "import": "./dist/module.mjs"
     },
     "./utils": {
@@ -20,7 +20,6 @@
     }
   },
   "main": "./dist/module.mjs",
-  "types": "./dist/runtime/types.d.ts",
   "typesVersions": {
     "*": {
       ".": [
