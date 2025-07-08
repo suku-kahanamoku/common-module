@@ -10,10 +10,6 @@
       "types": "./dist/types.d.mts",
       "import": "./dist/module.mjs"
     },
-    "./types": {
-      "types": "./dist/runtime/types.d.ts",
-      "import": "./dist/runtime/types.d.ts"
-    },
     "./utils": {
       "types": "./dist/runtime/utils/index.d.ts",
       "import": "./dist/runtime/utils/index.js"
@@ -24,6 +20,7 @@
     }
   },
   "main": "./dist/module.mjs",
+  "types": "./dist/runtime/types.d.ts",
   "typesVersions": {
     "*": {
       ".": [
