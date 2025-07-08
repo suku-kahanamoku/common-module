@@ -12,7 +12,7 @@
     },
     "./types": {
       "types": "./dist/runtime/types/index.d.ts",
-      "import": "./dist/runtime/types/index.d.js"
+      "import": "./dist/runtime/types/index.js"
     },
     "./utils": {
       "types": "./dist/runtime/utils/index.d.ts",
