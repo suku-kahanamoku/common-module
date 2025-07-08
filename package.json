@@ -11,7 +11,8 @@
       "import": "./dist/module.mjs"
     },
     "./types": {
-      "types": "./dist/runtime/types/index.d.ts"
+      "types": "./dist/runtime/types/index.d.ts",
+      "import": "./dist/runtime/types/index.d.js"
     },
     "./utils": {
       "types": "./dist/runtime/utils/index.d.ts",
