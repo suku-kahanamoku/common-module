@@ -1,14 +1,18 @@
 {
   "name": "@suku-kahanamoku/common-module",
-  "version": "1.0.18",
+  "version": "1.0.17",
   "description": "Common module",
   "repository": "@suku-kahanamoku/common-module",
   "license": "MIT",
   "type": "module",
   "exports": {
     ".": {
-      "types": "./dist/runtime/types.d.ts",
+      "types": "./dist/types.d.mts",
       "import": "./dist/module.mjs"
+    },
+    "./types": {
+      "types": "./dist/runtime/types.d.ts",
+      "import": "./dist/runtime/types.d.ts"
     },
     "./utils": {
       "types": "./dist/runtime/utils/index.d.ts",
@@ -20,6 +24,7 @@
     }
   },
   "main": "./dist/module.mjs",
+  "types": "./dist/runtime/types.d.ts",
   "typesVersions": {
     "*": {
       ".": [
