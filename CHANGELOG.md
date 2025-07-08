@@ -1,6 +1,18 @@
 # Changelog
 
 
+## v1.0.20
+
+[compare changes](https://undefined/undefined/compare/v1.0.18...v1.0.20)
+
+### 🏡 Chore
+
+- **release:** V1.0.18 (3ccc380)
+
+### ❤️ Contributors
+
+- Suche Kahanamoku <sukusovi@gmail.com>
+
 ## v1.0.18
 
 [compare changes](https://undefined/undefined/compare/v1.0.18...v1.0.18)
