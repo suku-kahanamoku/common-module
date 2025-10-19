@@ -1,8 +1,8 @@
-import { ref, watch } from "vue";
+import { nextTick, ref, watch } from "vue";
 import { useDebounceFn } from "@vueuse/core";
 import { useRoute, navigateTo, useUrl } from "#imports";
 
-import { CLONE, GET_MARK, ITERATE } from "../utils";
+import { CLONE, ITERATE } from "../utils";
 import type { IPagination, IConfig } from "../types";
 
 /**
@@ -53,7 +53,7 @@ export function useNavigable() {
       configParams.panel = config.panel;
       configParams.tab = config.tab;
       configParams.fix = config.fix;
-      configParams.model = config.model;
+      configParams.mode = config.mode;
 
       const query = _generateQueryParams(
         config.syscode,
@@ -61,52 +61,77 @@ export function useNavigable() {
         configParams
       );
 
-      await navigateTo(`${useUrl("self", { route })}?${query}`, {
-        replace: true,
-      });
+      await navigateTo(
+        { path: useUrl("self", { route }), query },
+        {
+          replace: true,
+        }
+      );
     }
   }
 
   /**
    * Změní stránkování a naviguje.
    *
-   * @param {IConfig} config - Konfigurace navigace.
-   * @param {number} value - Nová stránka.
+   * @param {IConfig} config
+   * @param {number} value
+   * @param {HTMLElement | string} [scrollTo]
    *
    * @example
    * onPageChange(config, 2);
    */
-  function onPageChange(config: IConfig, value: number) {
+  function onPageChange(
+    config: IConfig,
+    value: number,
+    scrollTo?: HTMLElement | string
+  ) {
     if (config?.syscode) {
       const pagination = config.pagination || {};
       pagination.page = value;
       navigate(config);
-      window.scrollTo({
-        top: 0,
-        behavior: "smooth",
-      });
+      if (scrollTo) {
+        nextTick(() => {
+          if (typeof scrollTo === "string") {
+            const element = document.querySelector(scrollTo);
+            element?.scrollIntoView({ behavior: "smooth", block: "start" });
+          } else {
+            scrollTo.scrollIntoView({ behavior: "smooth", block: "start" });
+          }
+        });
+      }
     }
   }
 
   /**
    * Změní počet položek na stránku a naviguje.
    *
-   * @param {IConfig} config - Konfigurace navigace.
-   * @param {number} value - Počet položek na stránku.
+   * @param {IConfig} config
+   * @param {number} value
+   * @param {HTMLElement | string} [scrollTo]
    *
    * @example
    * onLimitChange(config, 20);
    */
-  function onLimitChange(config: IConfig, value: number) {
+  function onLimitChange(
+    config: IConfig,
+    value: number,
+    scrollTo?: HTMLElement | string
+  ) {
     if (config?.syscode) {
       const pagination = config.pagination || {};
       pagination.limit = value;
       pagination.page = 1;
       navigate(config);
-      window.scrollTo({
-        top: 0,
-        behavior: "smooth",
-      });
+      if (scrollTo) {
+        nextTick(() => {
+          if (typeof scrollTo === "string") {
+            const element = document.querySelector(scrollTo);
+            element?.scrollIntoView({ behavior: "smooth", block: "start" });
+          } else {
+            scrollTo.scrollIntoView({ behavior: "smooth", block: "start" });
+          }
+        });
+      }
     }
   }
 
@@ -136,7 +161,7 @@ export function useNavigable() {
    * @param {string} syscode - Systémový kód.
    * @param {IPagination} [pagination] - Stránkovací metadata.
    * @param {IConfig} [config] - Další konfigurace.
-   * @returns {string} Query string.
+   * @returns {*}  {Record<string, string>}
    *
    * @example
    * const query = _generateQueryParams("syscode", { page: 2, limit: 10 }, config);
@@ -146,43 +171,41 @@ export function useNavigable() {
     syscode: string,
     pagination?: IPagination,
     config?: IConfig
-  ): string {
-    let urlConfig = {} as IConfig;
+  ): Record<string, any> {
+    let queryParams = {} as Record<string, any>;
 
-    // Načtení aktuální konfigurace z query parametrů
-    try {
-      urlConfig = JSON.parse((route.query[syscode] as string) || "{}");
-    } catch (error) {
-      console.error(error);
-    }
-    // Příklad: route.query = { syscode: '{"pagination":{"page":1,"limit":10}}' }
+    // Zkopírování existujících query parametrů
+    ITERATE(route.query, (value, key) => {
+      if (typeof value === "string") {
+        try {
+          queryParams[key] = JSON.parse(value);
+        } catch (error) {
+          console.error(error);
+        }
+      } else {
+        queryParams[key] = value;
+      }
+    });
 
-    // Nastavení stránkování
-    urlConfig.pagination = { page: pagination?.page, limit: pagination?.limit };
-    // Příklad: urlConfig.pagination = { page: 2, limit: 10 }
+    queryParams[syscode] = queryParams[syscode] || {};
 
     // Přidání dalších parametrů z konfigurace
     if (config) {
-      ITERATE(config, (value, key) => (urlConfig[key] = value));
+      ITERATE(config, (value, key) => (queryParams[syscode][key] = value));
     }
 
-    // Příklad: config = { sort: [["name", "asc"]] }
-    // Výsledek: urlConfig = { pagination: { page: 2, limit: 10 }, sort: [["name", "asc"]] }
-    const tmpQuery: Record<string, IConfig> = {};
-    tmpQuery[syscode] = urlConfig;
-    // Příklad: tmpQuery = { syscode: { pagination: { page: 2, limit: 10 }, sort: [["name", "asc"]] } }
+    // Nastavení stránkování
+    queryParams[syscode].pagination = {
+      page: pagination?.page,
+      limit: pagination?.limit,
+    };
 
-    // udela merge route.query a nove query, nakonec z merge udela query string pro url
-    let result = "";
+    // Serializace všech hodnot na string
     ITERATE(
-      { ...route.query, ...tmpQuery },
-      (value, key) =>
-        (result += `${GET_MARK(result)}${key}=${
-          key === syscode ? JSON.stringify(urlConfig) : value
-        }`)
+      queryParams,
+      (value, key) => (queryParams[key] = JSON.stringify(value))
     );
-    // Příklad: Výsledek = "syscode={...}&otherParam=value"
-    return result;
+    return queryParams;
   }
 
   watch(
