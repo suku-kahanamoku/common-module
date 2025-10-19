@@ -1,6 +1,6 @@
 {
   "name": "@suku-kahanamoku/common-module",
-  "version": "1.0.32",
+  "version": "1.0.33",
   "description": "Common module",
   "repository": "@suku-kahanamoku/common-module",
   "license": "MIT",
@@ -36,7 +36,7 @@
     "dist"
   ],
   "scripts": {
-    "prepack": "nuxt-module-build",
+    "prepack": "nuxt-module-build build",
     "dev": "npm run dev:prepare && nuxi dev playground",
     "dev:build": "nuxi build playground",
     "dev:prepare": "nuxt-module-build build --stub && nuxt-module-build prepare && nuxi prepare playground",
