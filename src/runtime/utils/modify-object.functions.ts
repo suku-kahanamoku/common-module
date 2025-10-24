@@ -138,7 +138,7 @@ export function GET_VALUE(
   name?: string,
   path?: string,
   delimiter: string = "."
-): Record<string, any> {
+): Record<string, any> | undefined {
   let value;
   if (item) {
     if (path) {
@@ -227,79 +227,4 @@ export function CONVERT_DOT_TO_OBJECT(params: Record<string, any>) {
       delete params[key];
     }
   });
-}
-
-
-
-/**
- * Prevede string datum dle formatu do Date objektu
- *
- * @export
- * @param {string} value
- * @param {string} [format]
- * @return {*}  {(Date | undefined)}
- */
-export function PARSE_STRING_TO_DATE(value: string, format?: string): Date | undefined {
-  const formatTokens = format?.match(/(DD|MM|YYYY|HH|mm|ss)/g);
-  const dateParts: { [key: string]: number } = {
-    DD: 1,
-    MM: 0,
-    YYYY: 1970,
-    HH: 0,
-    mm: 0,
-    ss: 0,
-  };
-
-  // Pro kazdou cast formatu najdeme odpovidajici hodnotu ve stringu
-  if (format) {
-    let regexString = format;
-    formatTokens?.forEach((token) => {
-      const index = regexString.indexOf(token);
-      const valuePart = value.substring(index, index + token.length);
-
-      switch (token) {
-        case "DD":
-          dateParts.DD = parseInt(valuePart, 10);
-          break;
-        case "MM":
-          dateParts.MM = parseInt(valuePart, 10) - 1; // Mesice jsou 0-based v JS Date
-          break;
-        case "YYYY":
-          dateParts.YYYY = parseInt(valuePart, 10);
-          break;
-        case "HH":
-          dateParts.HH = parseInt(valuePart, 10);
-          break;
-        case "mm":
-          dateParts.mm = parseInt(valuePart, 10);
-          break;
-        case "ss":
-          dateParts.ss = parseInt(valuePart, 10);
-          break;
-      }
-      regexString = regexString.replace(token, ".".repeat(token.length)); // aby se pozice nerozhodily
-    });
-  }
-
-  // Pokud je nektera hodnota invalidni (napr. parseInt vrati NaN)
-  if (Object.values(dateParts).some((part) => isNaN(part))) {
-    return undefined;
-  }
-
-  // Vytvorime datum vcetne sekund
-  const parsedDate = new Date(
-    dateParts.YYYY,
-    dateParts.MM,
-    dateParts.DD,
-    dateParts.HH,
-    dateParts.mm,
-    dateParts.ss
-  );
-
-  // Overime ze je datum validni
-  if (isNaN(parsedDate.getTime())) {
-    return undefined;
-  }
-
-  return parsedDate;
 }
