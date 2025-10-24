@@ -14,4 +14,4 @@ declare module "@vue/runtime-core" {
   }
 }
 
-export * from "./types";
+export * from "./types/index";
