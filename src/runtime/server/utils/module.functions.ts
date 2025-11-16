@@ -12,12 +12,14 @@ import { REMOVE_LAST_STRING, TRIM } from "../../utils/modify-string.functions";
  * @param {string} file - Název souboru, ze kterého se generuje endpoint.
  * @param {string} prefix - Prefix pro cestu endpointu.
  * @param {(...path: string[]) => string} resolve - Funkce pro vytvoření cesty k handleru.
+ * @param {string} [folderPath] - Relativní cesta složky pro vnořené API endpointy (např. "[_id]" nebo "[_id]/[_id]").
  * @returns {object | undefined} Vrací objekt s konfigurací endpointu nebo `undefined`, pokud není soubor typu `.ts`.
  */
 export function GENERATE_API_ENDPOINT(
   file: string,
   prefix: string,
-  resolve: (...path: string[]) => string
+  resolve: (...path: string[]) => string,
+  folderPath?: string
 ) {
   const { name, ext } = parse(file); // Rozdělení názvu souboru na části (např. `name`, `ext`).
   // Příklad: Pokud `file` je "user.get.ts", `name` bude "user.get" a `ext` bude ".ts".
@@ -28,17 +30,26 @@ export function GENERATE_API_ENDPOINT(
   // Příklad: "user.get" -> ["user", "get"]
 
   let route = prefix; // Základní cesta endpointu.
+
+  // Zpracování složkové cesty (např. "[_id]" -> ":id")
+  if (folderPath) {
+    const folderSegments = folderPath.split("/").filter(Boolean);
+    folderSegments.forEach((segment) => {
+      route += `/${segment.replaceAll("[_id]", ":id")}`;
+    });
+  }
+
   if (!nameArr[0].includes("index")) {
     route += `/${nameArr[0].replaceAll("[_id]", ":id")}`; // Pokud název neobsahuje "index", přidá se první část názvu do cesty.
     // Příklad: Pokud `prefix` je "/api" a `nameArr[0]` je "user", výsledná cesta bude "/api/user".
   }
 
-  // Vytvoření cesty k handleru. Pokud název končí na ".d", odstraní se tato část.
+  // Vytvoření cesty k handleru včetně složkové cesty. Pokud název končí na ".d", odstraní se tato část.
   // Příklad: Pokud `name` je "user.d.get", výsledná cesta bude "./runtime/server/api/user.get".
   const handlerPath = resolve(
-    `./runtime/server/${TRIM(prefix, "/")}/${
-      name.endsWith(".d") ? REMOVE_LAST_STRING(name, ".d", true) : name
-    }`
+    `./runtime/server/${TRIM(prefix, "/")}${
+      folderPath ? `/${folderPath}` : ""
+    }/${name.endsWith(".d") ? REMOVE_LAST_STRING(name, ".d", true) : name}`
   );
 
   const options = {

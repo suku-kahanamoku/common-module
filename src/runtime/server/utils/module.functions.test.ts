@@ -57,6 +57,8 @@ describe("module.functions.ts", () => {
       const apiLoginDir = "./runtime/server/api/login";
       const apiAuthDir = "./runtime/server/api/auth";
       const apiAdminDir = "./runtime/server/api/admin/user";
+      const apiAdminIdDir = "./runtime/server/api/admin/user/[_id]";
+      const apiAdminIdIdDir = "./runtime/server/api/admin/user/[_id]/[_id]";
 
       // Login API endpoints
       fs.readdirSync(apiLoginDir)?.forEach((file) => {
@@ -70,7 +72,7 @@ describe("module.functions.ts", () => {
             ? "post"
             : file.includes(".get.")
             ? "get"
-            : "get", // Výchozí metoda je "get"
+            : "get", // Výchozí metoda je 'get'
           middleware: false,
           lazy: true,
         });
@@ -88,7 +90,7 @@ describe("module.functions.ts", () => {
             ? "post"
             : file.includes(".get.")
             ? "get"
-            : "get", // Výchozí metoda je "get"
+            : "get", // Výchozí metoda je 'get'
           middleware: false,
           lazy: true,
         });
@@ -113,7 +115,58 @@ describe("module.functions.ts", () => {
             ? "post"
             : file.includes(".get.")
             ? "get"
-            : "get", // Výchozí metoda je "get"
+            : "get", // Výchozí metoda je 'get'
+          middleware: false,
+          lazy: true,
+        });
+      });
+
+      // Admin User [_id] API endpoints with single folder structure
+      fs.readdirSync(apiAdminIdDir)?.forEach((file) => {
+        const result = GENERATE_API_ENDPOINT(
+          file,
+          "/api/admin/user/[_id]/[_id]",
+          mockResolve
+        );
+        expect(result).toEqual({
+          route: `/api/admin/user/[_id]/[_id]${
+            file.includes("index") ? "" : `/${file.split(".")[0]}`
+          }`,
+          handler: `./runtime/server/api/admin/user/[_id]/[_id]/${file.replace(
+            /\.ts$/,
+            ""
+          )}`,
+          method: file.includes(".post.")
+            ? "post"
+            : file.includes(".get.")
+            ? "get"
+            : "get", // Výchozí metoda je 'get'
+          middleware: false,
+          lazy: true,
+        });
+      });
+
+      // Admin User [_id]/[_id] API endpoints with nested folder structure
+      fs.readdirSync(apiAdminIdIdDir)?.forEach((file) => {
+        const result = GENERATE_API_ENDPOINT(
+          file,
+          "/api/admin/user",
+          mockResolve,
+          "[_id]/[_id]"
+        );
+        expect(result).toEqual({
+          route: `/api/admin/user/:id/:id${
+            file.includes("index") ? "" : `/${file.split(".")[0]}`
+          }`,
+          handler: `./runtime/server/api/admin/user/[_id]/[_id]/${file.replace(
+            /\.ts$/,
+            ""
+          )}`,
+          method: file.includes(".post.")
+            ? "post"
+            : file.includes(".get.")
+            ? "get"
+            : "get", // Výchozí metoda je 'get'
           middleware: false,
           lazy: true,
         });
