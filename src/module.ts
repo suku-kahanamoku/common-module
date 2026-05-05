@@ -1,4 +1,9 @@
-import { defineNuxtModule, createResolver, addImportsDir } from "@nuxt/kit";
+import {
+  defineNuxtModule,
+  createResolver,
+  addImportsDir,
+  addServerImportsDir,
+} from "@nuxt/kit";
 import defu from "defu";
 
 /**
@@ -53,6 +58,12 @@ export default defineNuxtModule<ModuleOptions>({
 
     // Přidání composables
     addImportsDir(resolve("./runtime/composables"));
+
+    // Přidání utils jako auto-imports
+    addImportsDir(resolve("./runtime/utils"));
+
+    // Přidání server utils jako auto-imports pro server routes
+    addServerImportsDir(resolve("./runtime/server/utils"));
   },
 });
 
