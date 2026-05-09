@@ -23,6 +23,33 @@ import type { IPagination, IResponse } from "../types/response.interface";
  *   cache: false,
  * });
  */
+/**
+ * Normalizuje PHP API odpověď do standardního formátu IResponse.
+ * PHP vrací { success, message, data } kde data je buď { items, total, page, limit } nebo objekt.
+ */
+function normalizePhpResponse(response: any): IResponse {
+  if (response !== null && typeof response === "object" && "success" in response) {
+    const data = response.data;
+    // PHP list response: { success, data: { items: [], total, page, limit } }
+    if (data !== null && data !== undefined && typeof data === "object" && Array.isArray((data as any).items)) {
+      const d = data as { items: any[]; total: number; page: number; limit: number };
+      return {
+        data: d.items,
+        meta: {
+          total: d.total ?? 0,
+          limit: d.limit ?? 50,
+          page: d.page ?? 1,
+          skip: ((d.page ?? 1) - 1) * (d.limit ?? 50),
+        },
+      };
+    }
+    // PHP detail/mutation response: { success, data: {...} }
+    return { data };
+  }
+  // Non-PHP format – pass through as-is
+  return response as IResponse;
+}
+
 export async function useApi(
   url: string,
   options?: Record<string, any>
@@ -37,8 +64,9 @@ export async function useApi(
     if (options.cache === false) {
       options.headers["Cache-Control"] = "no-store, no-cache, must-revalidate";
     }
-    // Odeslání požadavku s nahrazením escapovaných znaků
-    return await $fetch(url.replaceAll("+", "%2B"), options);
+    // Odeslání požadavku s nahrazením escapovaných znaků a normalizace PHP odpovědi
+    const result = await $fetch(url.replaceAll("+", "%2B"), options);
+    return normalizePhpResponse(result);
   }
 }
 
@@ -125,8 +153,8 @@ export function useSortUrl(url: string, sort?: any[][]): string {
  */
 export function useLimitUrl(url: string, pagination?: IPagination): string {
   if (pagination) {
-    const skip = ((pagination.page || 1) - 1) * (pagination.limit || 0);
-    return url + `${GET_MARK(url)}limit=${pagination.limit || 50}&skip=${skip}`;
+    const page = pagination.page || 1;
+    return url + `${GET_MARK(url)}limit=${pagination.limit || 50}&page=${page}`;
   } else {
     return url;
   }
@@ -146,10 +174,13 @@ export function useLimitUrl(url: string, pagination?: IPagination): string {
  */
 export function useProjection(
   url: string,
-  projection?: Record<string, number>
+  projection?: string[] | Record<string, number>
 ): string {
   if (projection) {
-    return url + `${GET_MARK(url)}projection=${JSON.stringify(projection)}`;
+    const csv = Array.isArray(projection)
+      ? projection.join(",")
+      : Object.keys(projection).join(",");
+    return url + `${GET_MARK(url)}projection=${csv}`;
   } else {
     return url;
   }

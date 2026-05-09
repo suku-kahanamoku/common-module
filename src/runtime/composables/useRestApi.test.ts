@@ -49,7 +49,7 @@ describe("useRestApi", () => {
       const result = useCompleteUrl(url, cmp);
 
       expect(decodeURIComponent(result)).toBe(
-        '/api/items?sort=[["name","description"]]&limit=10&skip=10&projection={"name":1,"age":1}'
+        '/api/items?sort=[["name","description"]]&limit=10&page=2&projection=name,age'
       );
     });
   });
@@ -79,7 +79,7 @@ describe("useRestApi", () => {
       const pagination = { page: 2, limit: 10 };
       const result = useLimitUrl(url, pagination);
 
-      expect(result).toBe("/api/items?limit=10&skip=10");
+      expect(result).toBe("/api/items?limit=10&page=2");
     });
 
     it("should return the original URL if no pagination is provided", () => {
@@ -91,13 +91,21 @@ describe("useRestApi", () => {
   });
 
   describe("useProjection", () => {
-    it("should append projection parameters to the URL", () => {
+    it("should append projection as CSV from object keys", () => {
       const url = "/api/items";
       const projection = { name: 1, age: 1 };
       const result = useProjection(url, projection);
 
+      expect(decodeURIComponent(result)).toBe("/api/items?projection=name,age");
+    });
+
+    it("should append projection as CSV from array", () => {
+      const url = "/api/items";
+      const projection = ["name", "age", "data.year"];
+      const result = useProjection(url, projection);
+
       expect(decodeURIComponent(result)).toBe(
-        '/api/items?projection={"name":1,"age":1}'
+        "/api/items?projection=name,age,data.year"
       );
     });
 
