@@ -1,6 +1,18 @@
 # Changelog
 
 
+## v1.1.0
+
+[compare changes](https://undefined/undefined/compare/v1.0.42...v1.1.0)
+
+### 🚀 Enhancements
+
+- Use CSV projection, page-based pagination, normalize PHP API responses in useApi (b916a40)
+
+### ❤️ Contributors
+
+- Suku <sukusovi@gmail.com>
+
 ## v1.0.42
 
 [compare changes](https://undefined/undefined/compare/v1.0.41...v1.0.42)
