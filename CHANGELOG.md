@@ -1,6 +1,18 @@
 # Changelog
 
 
+## v1.2.0
+
+[compare changes](https://undefined/undefined/compare/v1.1.2...v1.2.0)
+
+### 🚀 Enhancements
+
+- **IItem:** Add created_at and updated_at fields (c738de6)
+
+### ❤️ Contributors
+
+- Suku <sukusovi@gmail.com>
+
 ## v1.1.2
 
 [compare changes](https://undefined/undefined/compare/v1.1.0...v1.1.2)
