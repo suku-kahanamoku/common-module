@@ -12,7 +12,7 @@ import { REMOVE_LAST_STRING, TRIM } from "../../utils/modify-string.functions";
  * @param {string} file - Název souboru, ze kterého se generuje endpoint.
  * @param {string} prefix - Prefix pro cestu endpointu.
  * @param {(...path: string[]) => string} resolve - Funkce pro vytvoření cesty k handleru.
- * @param {string} [folderPath] - Relativní cesta složky pro vnořené API endpointy (např. "[_id]" nebo "[_id]/[_id]").
+ * @param {string} [folderPath] - Relativní cesta složky pro vnořené API endpointy (např. "[id]" nebo "[id]/[id]").
  * @returns {object | undefined} Vrací objekt s konfigurací endpointu nebo `undefined`, pokud není soubor typu `.ts`.
  */
 export function GENERATE_API_ENDPOINT(
@@ -35,12 +35,12 @@ export function GENERATE_API_ENDPOINT(
   if (folderPath) {
     const folderSegments = folderPath.split("/").filter(Boolean);
     folderSegments.forEach((segment) => {
-      route += `/${segment.replaceAll("[_id]", ":id")}`;
+      route += `/${segment.replaceAll("[_id]", ":id").replaceAll("[id]", ":id")}`;
     });
   }
 
   if (!nameArr[0].includes("index")) {
-    route += `/${nameArr[0].replaceAll("[_id]", ":id")}`; // Pokud název neobsahuje "index", přidá se první část názvu do cesty.
+    route += `/${nameArr[0].replaceAll("[_id]", ":id").replaceAll("[id]", ":id")}`; // Pokud název neobsahuje "index", přidá se první část názvu do cesty.
     // Příklad: Pokud `prefix` je "/api" a `nameArr[0]` je "user", výsledná cesta bude "/api/user".
   }
 
@@ -89,7 +89,7 @@ export function GENERATE_PAGES(
     let resolvedName = name === "index" ? dirName : name; // Pokud je název "index", použije se název adresáře.
     // Příklad: Pokud `dirName` je "/about" a `name` je "index", `resolvedName` bude "/about".
 
-    resolvedName = resolvedName.replaceAll("[_id]", ":id");
+    resolvedName = resolvedName.replaceAll("[_id]", ":id").replaceAll("[id]", ":id");
 
     if (dirName !== resolvedName) {
       resolvedName = dirName.endsWith("/")
