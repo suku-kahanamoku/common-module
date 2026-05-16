@@ -1,6 +1,18 @@
 # Changelog
 
 
+## v1.2.1
+
+[compare changes](https://undefined/undefined/compare/v1.2.0...v1.2.1)
+
+### 💅 Refactors
+
+- Simplify useApi to strip PHP wrapper, fix useSortUrl for backend format, remove cache-control (c470ccc)
+
+### ❤️ Contributors
+
+- Suku <sukusovi@gmail.com>
+
 ## v1.2.0
 
 [compare changes](https://undefined/undefined/compare/v1.1.2...v1.2.0)
