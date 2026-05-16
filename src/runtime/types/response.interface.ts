@@ -42,12 +42,10 @@ export interface IMsg {
  * @property {number} [skip] - Počet přeskočených položek.
  */
 export interface IPagination {
-  enabled?: boolean;
   limit?: number;
   page?: number;
   total?: number;
-  table_total?: number;
-  interval?: number;
+  totalPages?: number;
   skip?: number;
 }
 

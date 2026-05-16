@@ -51,10 +51,10 @@ export interface IConfig {
   /**
    * Razeni
    *
-   * @type {any[][]}
+   * @type {any[]}
    * @memberof IConfig
    */
-  sort?: any[][];
+  sort?: any[];
 
   /**
    * Strankovani
