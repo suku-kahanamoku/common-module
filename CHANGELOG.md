@@ -1,6 +1,18 @@
 # Changelog
 
 
+## v1.2.2
+
+[compare changes](https://undefined/undefined/compare/v1.2.1...v1.2.2)
+
+### 🏡 Chore
+
+- Remove dead code (ITreeItem, IRef, RESOLVE_FACTORY), fix IPagination fields, fix sort type (5a185d0)
+
+### ❤️ Contributors
+
+- Suku <sukusovi@gmail.com>
+
 ## v1.2.1
 
 [compare changes](https://undefined/undefined/compare/v1.2.0...v1.2.1)
