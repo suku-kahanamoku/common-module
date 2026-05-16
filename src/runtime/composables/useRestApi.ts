@@ -23,36 +23,9 @@ import type { IPagination, IResponse } from "../types/response.interface";
  *   cache: false,
  * });
  */
-/**
- * Normalizuje PHP API odpověď do standardního formátu IResponse.
- * PHP vrací { success, message, data } kde data je buď { items, total, page, limit } nebo objekt.
- */
-function normalizePhpResponse(response: any): IResponse {
-  if (response !== null && typeof response === "object" && "success" in response) {
-    const data = response.data;
-    // PHP list response: { success, data: { items: [], total, page, limit } }
-    if (data !== null && data !== undefined && typeof data === "object" && Array.isArray((data as any).items)) {
-      const d = data as { items: any[]; total: number; page: number; limit: number };
-      return {
-        data: d.items,
-        meta: {
-          total: d.total ?? 0,
-          limit: d.limit ?? 50,
-          page: d.page ?? 1,
-          skip: ((d.page ?? 1) - 1) * (d.limit ?? 50),
-        },
-      };
-    }
-    // PHP detail/mutation response: { success, data: {...} }
-    return { data };
-  }
-  // Non-PHP format – pass through as-is
-  return response as IResponse;
-}
-
 export async function useApi(
   url: string,
-  options?: Record<string, any>
+  options?: Record<string, any>,
 ): Promise<IResponse | undefined> {
   if (url) {
     options = options || {};
@@ -60,13 +33,9 @@ export async function useApi(
     if (options.cookie !== false) {
       MERGE(options, { headers: useRequestHeaders(["cookie"]) as HeadersInit });
     }
-    // Zakázání cachování, pokud je nastaveno
-    if (options.cache === false) {
-      options.headers["Cache-Control"] = "no-store, no-cache, must-revalidate";
-    }
-    // Odeslání požadavku s nahrazením escapovaných znaků a normalizace PHP odpovědi
-    const result = await $fetch(url.replaceAll("+", "%2B"), options);
-    return normalizePhpResponse(result);
+    // Odeslání požadavku – PHP vrací { success, message, data, meta? }
+    const result: any = await $fetch(url.replaceAll("+", "%2B"), options);
+    return { data: result.data, meta: result.meta };
   }
 }
 
@@ -86,9 +55,9 @@ export function useUrl(url: string, cmp?: any): string {
   return RTRIM(
     RESOLVE_MARKS(
       decodeURIComponent(url).replace("self", cmp?.route?.path),
-      cmp
+      cmp,
     ),
-    "/"
+    "/",
   ).replaceAll("#", "%23");
 }
 
@@ -131,7 +100,7 @@ export function useCompleteUrl(url: string, cmp?: any): string {
  * const url = useSortUrl("/api/items", [["name", "asc"]]);
  * console.log(url); // "/api/items?sort=%5B%5B%22name%22%2C%22asc%22%5D%5D"
  */
-export function useSortUrl(url: string, sort?: any[][]): string {
+export function useSortUrl(url: string, sort?: any[]): string {
   if (sort?.length) {
     return url + `${GET_MARK(url)}sort=${JSON.stringify(sort)}`;
   } else {
@@ -174,7 +143,7 @@ export function useLimitUrl(url: string, pagination?: IPagination): string {
  */
 export function useProjection(
   url: string,
-  projection?: string[] | Record<string, number>
+  projection?: string[] | Record<string, number>,
 ): string {
   if (projection) {
     const csv = Array.isArray(projection)
